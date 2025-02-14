@@ -1,5 +1,5 @@
 const { expect } = require("chai");
-const { ethers } = require("@nomicfoundation/hardhat-ethers");
+const { ethers } = require("hardhat");
 
 describe("BabeToken", function () {
   let BabeToken, babeToken, owner, addr1, addr2;
