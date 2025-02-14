@@ -1,4 +1,3 @@
-# babel-dao
 Babel DAO ($BABE)
 
 📌 Description
@@ -18,6 +17,24 @@ Dynamic mining (Degens vs. Regens) → Self-regulated risk/reward models.
 Global DAO and Local DAOs → Multi-level governance with advanced security.
 
 Attack protection → Flash Loans, Sybil Attacks, Reentrancy, and more.
+
+
+🔹 Mining in Babel DAO: Degens vs. Regens
+
+✅ Two self-regulating mining styles:
+
+Degens → High-risk mining with a chance to double rewards, but a 10% chance of losing everything (burned tokens reinforce deflationary mechanics).
+
+Regens → Stable mining with consistent rewards and no loss risk, but with lower APR compared to Degens.
+
+📌 Mining Rules:
+
+Each Nation has a daily mining cap, scalable based on its level and activity.
+
+Cooldown system ensures miners engage with the platform and prevents bot automation.
+
+Mining patterns are monitored, and Nations with anomalies may see their mining cap progressively reduced.
+
 
 🚀 Implementation Roadmap
 
