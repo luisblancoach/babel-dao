@@ -6,49 +6,26 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 contract BabeToken is ERC20, Ownable, ReentrancyGuard {
-    struct Nation {
-    bool isActive;
-    uint256 rewardPool;
-    uint256 minLevelForMining;
-    uint256 dailyMiningCap;
-    uint256 lastReset;
-    address steward; // AI Agent assigned to manage the DAO
-    }
-
- struct Staker {
-    uint256 amount;
-    uint256 unlockTime;
-    uint256 experienceLevel;
-    uint256 rewardMultiplier;
-    uint256 baseAPR;
-    uint256 lastVoteBlock;
-}
-
-function stake(uint256 _amount) external {
-    stakes[msg.sender] = Staker({
-    amount: _amount,
-    unlockTime: block.timestamp + 30 days,
-    experienceLevel: 1,
-    rewardMultiplier: 1,
-    baseAPR: 10,
-    lastVoteBlock: block.number
-    });
-
-    emit StakeCreated(msg.sender, _amount, block.timestamp);
-    }
-    function unstake() external {
-    require(stakes[msg.sender].amount > 0, "No active stake");
-
-    uint256 amount = stakes[msg.sender].amount;
-    delete stakes[msg.sender]; // Reset the stake
-
-    emit StakeWithdrawn(msg.sender, amount, block.timestamp);
-    }
     
-function calculateRewards(address _user) external view returns (uint256) {
-    return stakes[_user].amount * stakes[_user].baseAPR / 100;
+    // ✅ Estructuras bien posicionadas
+    struct Nation {
+        bool isActive;
+        uint256 rewardPool;
+        uint256 minLevelForMining;
+        uint256 dailyMiningCap;
+        uint256 lastReset;
+        address steward;
     }
-}
+
+    struct Staker {
+        uint256 amount;
+        uint256 unlockTime;
+        uint256 experienceLevel;
+        uint256 rewardMultiplier;
+        uint256 baseAPR;
+        uint256 lastVoteBlock;
+    }
+
     struct Proposal {
         string description;
         uint256 votesFor;
@@ -57,6 +34,7 @@ function calculateRewards(address _user) external view returns (uint256) {
         bool executed;
     }
 
+    // ✅ Mappings bien posicionados después de los structs
     mapping(string => Nation) public nations;
     mapping(address => mapping(string => uint256)) public userMiningPower;
     mapping(address => uint256) public degenRiskLevel;
@@ -69,10 +47,10 @@ function calculateRewards(address _user) external view returns (uint256) {
 
     uint256 public totalBurned;
     uint256 public proposalCount;
-    uint256 public minStakeToVote = 100 * 10**18; // Minimum 100 $BABE to vote
-    uint256 public minStakingDuration = 7 days; // Tokens must be staked at least 7 days before voting
-    uint256 public globalMiningRate = 10 * 10**18; // 10 $BABE per block
-    uint256 public maxSupply = 1_000_000_000 * 10**18; // 1B $BABE
+    uint256 public minStakeToVote = 100 * 10**18;
+    uint256 public minStakingDuration = 7 days;
+    uint256 public globalMiningRate = 10 * 10**18;
+    uint256 public maxSupply = 1_000_000_000 * 10**18;
     uint256 public totalMinted;
 
     event NationActivated(string nation);
@@ -83,14 +61,13 @@ function calculateRewards(address _user) external view returns (uint256) {
     event StewardAssigned(string nation, address steward);
     event TokensStaked(address indexed user, uint256 amount, uint256 unlockTime, uint256 experienceLevel, uint256 rewardMultiplier, uint256 baseAPR);
     event TokensUnstaked(address indexed user, uint256 amount, uint256 profitLoss);
-
     event ProposalCreated(uint256 proposalId, string description, uint256 endTime);
     event VoteCast(address indexed voter, uint256 proposalId, bool support);
     event ProposalExecuted(uint256 proposalId, bool success);
     event UserVerified(address indexed user);
-    
+
     constructor() ERC20("Babel Token", "BABE") {
-    _mint(msg.sender, 10_000_000 * 10**18); // 10M $BABE to treasury for initial distribution
+        _mint(msg.sender, 10_000_000 * 10**18);
     }
 
     modifier onlyVerified() {
@@ -120,8 +97,8 @@ function calculateRewards(address _user) external view returns (uint256) {
         require(block.timestamp < proposals[proposalId].endTime, "Voting period has ended");
         require(!hasVoted[msg.sender][proposalId], "Already voted");
         require(stakers[msg.sender].lastVoteBlock < proposals[proposalId].endTime, "Tokens must be staked before proposal started");
-        
-        uint256 votingPower = stakers[msg.sender].amount / 10**18; // 1 vote per token staked
+
+        uint256 votingPower = stakers[msg.sender].amount / 10**18;
         if (support) {
             proposals[proposalId].votesFor += votingPower;
         } else {
